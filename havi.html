@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Birthday Surprise</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* MAIN BODY */
+
+body{
+    min-height:100vh;
+    overflow:hidden;
+    background:linear-gradient(180deg,#ff9fc1,#ffd97f);
+    font-family:'Nunito',sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+}
+
+/* MAIN SCREEN */
+
+.phoneScreen{
+    width:100%;
+    height:100vh;
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:35px;
+    overflow:hidden;
+}
+
+.glow1,
+.glow2{
+    position:absolute;
+    border-radius:50%;
+    background:white;
+    opacity:0.15;
+}
+
+.glow1{
+    width:260px;
+    height:260px;
+    top:-80px;
+    left:-80px;
+}
+
+.glow2{
+    width:220px;
+    height:220px;
+    bottom:-70px;
+    right:-70px;
+}
+
+.previewContent{
+    position:relative;
+    z-index:2;
+    max-width:700px;
+}
+
+.previewContent h2{
+    font-size:58px;
+    line-height:1.1;
+    margin-bottom:25px;
+}
+
+.sub{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:14px;
+    opacity:0.95;
+}
+
+.name{
+    font-size:78px;
+    font-weight:900;
+    margin-bottom:25px;
+}
+
+.desc2{
+    font-size:24px;
+    line-height:1.6;
+    opacity:0.95;
+    margin-bottom:45px;
+}
+
+.previewBtn{
+    background:white;
+    color:#ff5f98;
+    border:none;
+    border-radius:22px;
+    padding:20px 34px;
+    font-size:22px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+    transition:0.25s;
+}
+
+.previewBtn:hover{
+    transform:scale(1.05);
+}
+
+.made{
+    margin-top:24px;
+    font-size:16px;
+    opacity:0.9;
+}
+
+/* BALLOON SCREEN */
+
+.balloonScreen{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(180deg,#ff9fc1,#ffd97f);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:35px;
+    overflow:hidden;
+    z-index:999;
+}
+
+.hidden{
+    display:none;
+}
+
+.previewSub{
+    color:white;
+    margin-bottom:35px;
+    font-size:20px;
+}
+
+.balloonArea{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:22px;
+    margin-top:30px;
+}
+
+.balloon{
+    width:100px;
+    height:125px;
+    background:radial-gradient(circle at 30% 30%,#fff8ff,#ff5fa0);
+    border-radius:50% 50% 45% 45%;
+    position:relative;
+    cursor:pointer;
+    transition:0.25s;
+    box-shadow:
+    0 0 25px rgba(255,255,255,0.8),
+    0 0 50px rgba(255,105,180,0.45);
+
+    animation:float s ease-in-out infinite;
+}
+
+.balloon::after{
+    content:'';
+    position:absolute;
+    width:2px;
+    height:60px;
+    background:white;
+    bottom:-58px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.balloon:hover{
+    transform:scale(1.08);
+}
+
+.balloon.pop{
+    animation:pop 0.35s forwards;
+}
+
+.balloonMessage{
+    position:absolute;
+    width:260px;
+    background:rgba(255,255,255,0.2);
+    backdrop-filter:blur(10px);
+    color:white;
+    padding:20px;
+    border-radius:22px;
+    font-size:18px;
+    line-height:1.5;
+    animation:messageShow 0.5s ease;
+    box-shadow:0 10px 30px rgba(0,0,0,0.12);
+}
+
+@keyframes float{
+    0%{transform:translateY(0px)}
+    50%{transform:translateY(-14px)}
+    100%{transform:translateY(0px)}
+}
+
+@keyframes pop{
+    to{
+        transform:scale(1);
+        opacity:0;
+    }
+}
+
+@keyframes messageShow{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0px);
+    }
+}
+
+/* CAKE BUTTON */
+
+.cakeBtn{
+    position:fixed;
+    bottom:40px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:16px 28px;
+    font-size:18px;
+    border:none;
+    border-radius:16px;
+    background:#ff4f8b;
+    color:white;
+    cursor:pointer;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    z-index:2000;
+}
+
+/* ========================= */
+/* CAKE ROOM */
+/* ========================= */
+
+.cakeRoom{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(180deg,#ffe3ec,#fff6c4);
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    overflow:hidden;
+    text-align:center;
+    z-index:5000;
+    color:black;
+    cursor:pointer;
+    font-family:sans-serif;
+}
+
+.cakeRoom.active{
+    display:flex;
+}
+
+/* HEADER */
+
+.header{
+    margin-top:25px;
+}
+
+.cakeRoom h1{
+    margin:0;
+    font-size:26px;
+    color:#ff4f8b;
+}
+
+.cakeRoom p{
+    margin-top:5px;
+    color:#ff6fa3;
+}
+
+/* CAKE WRAP */
+
+.cakeWrap{
+    margin-top:110px;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+/* PLATE */
+
+.plate{
+    width:200px;
+    height:18px;
+    background:white;
+    border-radius:50%;
+    position:absolute;
+    bottom:-12px;
+    box-shadow:0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* CAKE TIERS */
+
+.top{
+    width:120px;
+    height:40px;
+    background:#ff9fc1;
+    border-radius:14px;
+    position:relative;
+}
+
+.middle{
+    width:160px;
+    height:50px;
+    background:#ff7aa8;
+    margin-top:-6px;
+    border-radius:14px;
+    position:relative;
+}
+
+.bottom{
+    width:200px;
+    height:60px;
+    background:#ff4f8b;
+    margin-top:-6px;
+    border-radius:14px;
+    position:relative;
+}
+
+/* frosting */
+
+.top::before,
+.middle::before,
+.bottom::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:10px;
+    background:#fff;
+    border-radius:14px;
+}
+
+/* CANDLES */
+
+.candlesRow{
+    position:absolute;
+    top:-22px;
+    left:0;
+    width:100%;
+    display:flex;
+    justify-content:space-evenly;
+    align-items:flex-end;
+}
+
+.candle{
+    width:5px;
+    height:28px;
+    background:white;
+    border-radius:2px;
+    position:relative;
+    display:flex;
+    justify-content:center;
+}
+
+.flame{
+    width:8px;
+    height:8px;
+    background:radial-gradient(circle,#ffcc66,#ff6a00);
+    border-radius:50%;
+    position:absolute;
+    top:-10px;
+    animation:flicker 0.25s infinite alternate;
+}
+
+@keyframes flicker{
+    from{transform:scale(1);}
+    to{transform:scale(1.3);}
+}
+
+/* MESSAGE */
+
+.msg{
+    margin-top:30px;
+    font-size:20px;
+    color:#ff4f8b;
+    opacity:0;
+    transition:0.6s;
+    font-weight:bold;
+}
+
+/* OVERLAY */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:black;
+    opacity:0;
+    pointer-events:none;
+    transition:1.2s;
+}
+
+/* PARTY MODE */
+
+.party{
+    background:black !important;
+    color:white;
+}
+
+.party h1{
+    color:#0ff;
+    text-shadow:0 0 20px #0ff,0 0 40px #f0f;
+}
+
+/* CONFETTI */
+
+.confetti{
+    position:absolute;
+    width:7px;
+    height:7px;
+    top:-10px;
+    animation:fall 3s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(120vh) rotate(720deg);
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .previewContent h2{
+        font-size:42px;
+    }
+
+    .name{
+        font-size:56px;
+    }
+
+    .desc2{
+        font-size:20px;
+    }
+
+}
+
+/* GAME ROOM */
+
+.gameRoom{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(180deg,#ffb6d9,#ffe9b8);
+    display:none;
+    justify-content:center;
+    align-items:flex-start;
+    overflow:hidden;
+    z-index:6000;
+    font-family:'Nunito',sans-serif;
+    color:white;
+}
+
+.gameRoom.active{
+    display:flex;
+}
+
+.gameRoom .wrap{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+}
+
+.gameRoom h1{
+    font-size:34px;
+    margin-top:15px;
+    color:white;
+}
+
+.gameRoom p{
+    font-size:14px;
+    color:white;
+}
+
+.gameRoom .stats{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+    font-size:12px;
+}
+
+.gameRoom .stat{
+    background:rgba(255,255,255,0.2);
+    padding:10px;
+    border-radius:14px;
+    min-width:70px;
+    text-align:center;
+}
+
+.gameRoom .memoryButtons{
+    margin-top:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    width:100%;
+}
+
+.gameRoom .memoryButtons button{
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:12px;
+    font-size:20px;
+    background:white;
+    cursor:pointer;
+}
+
+.gameRoom .gameBoard{
+    margin-top:15px;
+    display:grid;
+    grid-template-columns:repeat(3,75px);
+    gap:8px;
+    width:max-content;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.gameRoom .card{
+    width:75px;
+    height:75px;
+    background:white;
+    border-radius:16px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:30px;
+    color:#ff4f8b;
+    cursor:pointer;
+    user-select:none;
+    box-shadow:0 5px 12px rgba(0,0,0,0.12);
+}
+
+.gameRoom .card.flipped{
+    background:#fff0f6;
+}
+
+.gameRoom .card.matched{
+    background:#ff4f8b;
+    color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MAIN SCREEN -->
+
+<div class="phoneScreen">
+
+    <div class="glow1"></div>
+    <div class="glow2"></div>
+
+    <div class="previewContent">
+
+        <h2>here is your gift</h2>
+
+        <div class="sub">
+            A birthday surprise for
+        </div>
+
+        <div class="name">
+            Arish
+        </div>
+
+        <div class="desc2">
+            i made this just for you.
+            Are you ready?
+        </div>
+
+        <button class="previewBtn" id="openBtn">
+            Open Your Surprise
+        </button>
+
+        <div class="made">
+            Made with love ❤️
+        </div>
+
+    </div>
+
+</div>
+
+<!-- BALLOON SCREEN -->
+
+<div class="balloonScreen hidden" id="balloonScreen"> 
+
+    <div class="glow1"></div>
+    <div class="glow2"></div>
+
+    <div class="previewContent">
+
+        <h2>Pop the balloons!</h2>
+
+        <div class="previewSub">
+            Each balloon has a secret message 💖
+        </div>
+
+        <div class="balloonArea">
+
+            <div class="balloon" data-message="I'm really greatful you decided to text me that day 😭"></div>
+
+            <div class="balloon" data-message="A copy cat but still the best twin I've ever met!🌹"></div>
+
+            <div class="balloon" data-message="I fear your memory more than my exams honestly😭💀"></div>
+
+            <div class="balloon" data-message="you and your mommy obsession need professinal help!😭"></div>
+
+            <div class="balloon" data-message="You somehow turned into my comfort person😭🌷"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ENTER CAKE ROOM BUTTON -->
+
+<button id="cakeBtn" class="cakeBtn hidden">
+    Enter Cake Room 🎂
+</button>
+
+<!-- CAKE ROOM -->
+
+<div class="cakeRoom" id="cakeRoom">
+
+    <div class="header">
+        <h1>🎂 Cake Time</h1>
+        <p> Make a wish and blow the candles✨</p>
+    </div>
+
+    <div class="cakeWrap">
+
+        <div class="plate"></div>
+
+        <div class="top">
+
+            <div class="candlesRow">
+
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+
+            </div>
+
+        </div>
+
+        <div class="middle"></div>
+        <div class="bottom"></div>
+
+    </div>
+
+    <div class="msg" id="msg">💖 Happy Birthday Arish 💖</div>
+
+    <div class="overlay" id="overlay"></div>
+
+<button id="gameBtn" class="cakeBtn hidden" style="bottom:100px; z-index:6000;">
+    Enter Game Room 🃏
+</button>
+
+</div> 
+
+<!-- GAME ROOM -->
+
+<div class="gameRoom hidden" id="gameRoom">
+
+<div class="wrap">
+
+<h1>Memory Match 🃏</h1>
+<p>Find all the pairs — but watch out for the bomb! 💣</p>
+
+<div class="stats">
+    <div class="stat">Matches<br><span id="matches">0</span>/4</div>
+    <div class="stat">Flips<br><span id="flips">0</span></div>
+    <div class="stat">Bombs<br><span id="bombs">0</span></div>
+</div>
+
+<div class="memoryButtons">
+    <button id="restart">🔀</button>
+    <button id="skip">⏭️</button>
+</div>
+
+<div class="gameBoard" id="board"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const openBtn = document.getElementById("openBtn");
+const balloonScreen = document.getElementById("balloonScreen");
+const cakeBtn = document.getElementById("cakeBtn");
+const cakeRoom = document.getElementById("cakeRoom");
+
+const balloons = document.querySelectorAll(".balloon");
+
+let popped = 0;
+const total = balloons.length;
+
+/* OPEN BALLOON SCREEN */
+
+openBtn.addEventListener("click", () => {
+
+    balloonScreen.classList.remove("hidden");
+
+});
+
+/* BALLOON POP */
+
+balloons.forEach(balloon => {
+
+    balloon.addEventListener("click", () => {
+
+        if (balloon.classList.contains("pop")) return;
+
+        balloon.classList.add("pop");
+
+        popped++;
+
+        const message = balloon.dataset.message;
+
+        setTimeout(() => {
+
+            balloon.style.display = "none";
+
+            const msg = document.createElement("div");
+
+            msg.classList.add("balloonMessage");
+
+            msg.innerText = message;
+
+            balloon.parentElement.appendChild(msg);
+
+            setTimeout(() => {
+                msg.remove();
+            }, 2000);
+
+        }, 300);
+
+        /* SHOW CAKE BUTTON */
+
+        if (popped === total) {
+
+            cakeBtn.classList.remove("hidden");
+
+        }
+
+    });
+
+});
+
+/* OPEN CAKE ROOM */
+
+cakeBtn.addEventListener("click", () => {
+
+    balloonScreen.style.display = "none";
+
+    cakeBtn.style.display = "none";
+
+    cakeRoom.classList.add("active");
+
+});
+
+/* CAKE MAGIC */
+
+let triggered = false;
+
+cakeRoom.addEventListener("click", () => {
+
+    if(triggered) return;
+    triggered = true;
+
+    const overlay = document.getElementById("overlay");
+
+    overlay.style.opacity = "1";
+
+    setTimeout(() => {
+
+        overlay.style.opacity = "0";
+
+        cakeRoom.classList.add("party");
+
+        document.querySelectorAll(".flame").forEach(f=>{
+            f.style.display="none";
+        });
+
+        document.getElementById("msg").style.opacity="1";
+
+        for(let i=0;i<100;i++){
+
+            const c=document.createElement("div");
+
+            c.className="confetti";
+
+            c.style.left=Math.random()*100+"vw";
+
+            c.style.background=`hsl(${Math.random()*360},100%,60%)`;
+
+            c.style.animationDuration=(2+Math.random()*2)+"s";
+
+            cakeRoom.appendChild(c);
+
+            setTimeout(()=>c.remove(),4000);
+
+        }
+
+    },1200);
+
+});
+/* GAME ROOM OPEN */
+
+const gameBtn = document.getElementById("gameBtn");
+const gameRoom = document.getElementById("gameRoom");
+
+gameBtn.addEventListener("click", () => {
+
+    cakeRoom.classList.remove("active");
+    gameRoom.classList.add("active");
+
+    startGame();
+
+});
+
+/* SHOW GAME BUTTON AFTER CAKE EVENT */
+
+setTimeout(() => {
+    gameBtn.classList.remove("hidden");
+}, 2000);
+
+/* ========================= */
+/* MEMORY GAME LOGIC */
+/* ========================= */
+
+const board = document.getElementById("board");
+const matchesEl = document.getElementById("matches"); 
+const flipsEl = document.getElementById("flips"); 
+const bombsEl = document.getElementById("bombs"); 
+
+const emojis = ["🎂","🎂","💖","💖","✨","✨","🎁","🎁","💣"]; 
+
+let first=null, second=null, lock=false; 
+let matches=0, flips=0, bombs=0; 
+
+function shuffle(a){ 
+   for(let i=a.length-1;i>0;i--){ 
+       let j=Math.floor(Math.random()*(i+1)); 
+       [a[i],a[j]]=[a[j],a[i]];
+    } 
+} 
+
+function start(){ 
+    
+     board.innerHTML=""; 
+
+     matches=0; flips=0; bombs=0; 
+
+     matchesEl.innerText=0; 
+     flipsEl.innerText=0; 
+     bombsEl.innerText=0; 
+
+     let cards=[...emojis]; 
+     shuffle(cards); 
+
+     cards.forEach(e=>{
+ 
+            const c=document.createElement("div"); 
+            c.className="card"; c.dataset.emoji=e;
+            c.innerText="🎀";
+   
+            c.onclick=()=>flip(c);
+ 
+           board.appendChild(c); 
+
+     }); 
+
+} 
+
+function flip(card){
+
+      if(lock) return; 
+      if(card.classList.contains("flipped")) return; 
+
+    
+     card.classList.add("flipped"); 
+     card.innerText=card.dataset.emoji; 
+
+
+     flips++; 
+     flipsEl.innerText=flips; 
+
+     if(card.dataset.emoji==="💣"){ 
+
+     bombs++; 
+     bombsEl.innerText=bombs;
+
+
+     setTimeout(()=>{ 
+         alert("💣 BOOM! Restarting..."); 
+          start(); 
+     },400); 
+
+     return; 
+} 
+
+if(!first){ 
+     first=card; 
+     return;
+} 
+
+second=card; 
+lock=true; 
+
+if(first.dataset.emoji===second.dataset.emoji){ 
+
+
+     first.classList.add("matched"); 
+     second.classList.add("matched");
+
+     matches++; 
+     matchesEl.innerText=matches; 
+
+     first=null; 
+     second=null; 
+     lock= false; 
+
+}else{
+ 
+     setTimeout(()=>{ 
+       
+           first.classList.remove("flipped"); 
+           second.classList.remove("flipped"); 
+
+
+           first.innerText="🎀"; 
+           second.innerText="🎀"; 
+
+
+           first=null; 
+           second=null; 
+           lock=false; 
+
+     },800); 
+
+ 
+   } 
+
+} 
+
+start(); 
+
+document.getElementById("restart").onclick=start;
+
+document.getElementById("skip").onclick=()=>{
+
+    alert("⏭️ Skipped to next stage!");
+    giftRoomBtn.classList.remove("hidden");
+
+};
+
+</script> 
+</body> 
+</html>) 
